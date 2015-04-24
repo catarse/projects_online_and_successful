@@ -1,3 +1,6 @@
+```{r,echo=FALSE,results='hide'}
+library(ggplot2)
+```
 ---
 title: "Número de projetos online e taxa de sucesso"
 output: html_document
@@ -43,17 +46,21 @@ xaxis <- as.POSIXct(paste(projects[,1], "-01", sep = ""))
 Podemos começar apresentando a evolução de projetos no tempo:
 
 ```{r,echo=FALSE}
-plot(xaxis, projects[,4], type = "l", col = "black")
-lines(xaxis, projects[,2], type = "l", col = "green")
-lines(xaxis, projects[,3], type = "l", col = "red")
+ggplot() + 
+    xlab("Data") +
+    geom_line(col = 'black', aes(x = xaxis, y = total), data = projects) +
+    geom_line(col = 'red', aes(x = xaxis, y = nao_financiados), data = projects) +
+    geom_line(col = 'blue', aes(x = xaxis, y = financiados), data = projects)
 ```
 
 Vamos estabelecer a correlação entre total de projetos online no período e total de projetos não financiados
 
 ```{r, echo=FALSE}
-plot(projects[,4], projects[,2], col = "green")
-points(projects[,4], projects[,3], col = "red")
-
-abline(lm(projects[,2]~projects[,4]), col="green")
-abline(lm(projects[,3]~projects[,4]), col="red")
+ggplot(data = projects) + 
+    xlab("Total de projetos em um mês") +
+    ylab("Resultados dos projetos no mês") +
+    geom_point(col = 'red', aes(x = total, y = nao_financiados)) +
+    geom_point(col = 'blue', aes(x = total, y = financiados)) +
+    stat_smooth(col = 'red', aes(x = total, y = nao_financiados), method="lm", se=FALSE) +
+    stat_smooth(col = 'blue', aes(x = total, y = financiados), method="lm", se=FALSE)
 ```
