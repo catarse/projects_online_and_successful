@@ -1,0 +1,59 @@
+---
+title: "Número de projetos online e taxa de sucesso"
+output: html_document
+---
+
+Uma dúvida pairava sobre o escritório do Catarse há algumas semanas já.
+Será que ter muitos projetos online pode reduzir a chance de um projeto específico ser bem sucedido?
+Especialmente se observarmos os apoios em uma categoria.
+
+O raciocínio parece fazer sentido, pois em uma comunidade pequena, talvez vários projetos compartilhem apoiadores. As pessoas têm um orçamento limitado para apoiar projetos, logo se saturarmos uma rede de contatos os apoiadores talvez escolham um projeto em detrimento de outro.
+
+No entanto, temos que considerar a hipótese alternativa. Se se não existir tal correlação?
+Obviamente o número de projetos financiados e não financiados estarão correlacionados com o 
+número de projetos online, pois os projetos online geram aqueles. Mas e se isso for a única 
+relação e não existir nenhum indício de saturação de redes?
+
+## Os números
+
+Uma das vantagens de se trabalhar no Catarse é que podemos usar a nossa base de dados para tentar 
+responder esse tipo de pergunta.
+
+## Apresentando "O incrível R"
+Vamos abrir o processo investigativo não só por uma questão de clareza, e porque estamos abertos a críticas ao método, mas também pr acreditarmos que as ferramentas usadas aqui podem ser valiosas para a nossa comunidade de realizadores. O código usado assim como esse texto podem ser encontrados em nossa (conta do github)["http://github.com/catarse"]
+
+As ferramentas que usamos para criar esse texto:
+
+ * [RStudio](http://www.rstudio.com/)
+ * [Dataclip de projetos de quadrinhos por mês](https://www.catarse.me/dbhero/dataclips/1b81eb33-16cd-4a1b-a76f-efe1bab9aa4e.csv)
+
+## A Análise
+
+```{r,echo=FALSE}
+# Preparing data sources
+# Download, extract and read into variables
+file <- "./data.csv"
+if(!file.exists(file)){
+  download.file("https://www.catarse.me/dbhero/dataclips/1b81eb33-16cd-4a1b-a76f-efe1bab9aa4e.csv", destfile=file, method="curl")
+}
+projects <- read.csv(file, header=TRUE)
+xaxis <- as.POSIXct(paste(projects[,1], "-01", sep = ""))
+```
+
+Podemos começar apresentando a evolução de projetos no tempo:
+
+```{r,echo=FALSE}
+plot(xaxis, projects[,4], type = "l", col = "black")
+lines(xaxis, projects[,2], type = "l", col = "green")
+lines(xaxis, projects[,3], type = "l", col = "red")
+```
+
+Vamos estabelecer a correlação entre total de projetos online no período e total de projetos não financiados
+
+```{r, echo=FALSE}
+plot(projects[,4], projects[,2], col = "green")
+points(projects[,4], projects[,3], col = "red")
+
+abline(lm(projects[,2]~projects[,4]), col="green")
+abline(lm(projects[,3]~projects[,4]), col="red")
+```
