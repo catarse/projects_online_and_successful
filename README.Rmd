@@ -45,7 +45,33 @@ projects <- read.csv(file, header=TRUE)
 xaxis <- as.POSIXct(paste(projects[,1], "-01", sep = ""))
 ```
 
-Vamos estabelecer a correlação entre total de projetos online no período e total de projetos não financiados. No gráfico abaixo
+Vamos estabelecer a correlação entre total de projetos online no período e total de projetos não financiados. No gráfico abaixo cada ponto um mês de projetos no Catarse. No eixo X está o total de projetos online naquele mês. No eixo Y temos o total de projetos financiados, no caso dos pontos verdes, ou o total de projetos não financiados no caso dos pontos vermelhos.
+
+```{r, echo=FALSE}
+ggplot(data = projects, aes(x = total_mes, y = total_resultado, colour = resultado)) + 
+    xlab("Total de projetos em um mês") +
+    ylab("Resultados dos projetos no mês") +
+    geom_point() +
+    stat_smooth(method="lm", se=FALSE)
+```
+
+Desenhamos no gráfico duas linhas que mostram as correlações entre os eixos. A medida em que aumentamos o número de projetos online em um mês (indo para a direita no eixo X), aumentamos os projetos com os dois resultados (por isso as duas linhas são ascendentes).
+
+No entanto, a linha verde cresce mais rapidamente, o que indica a tendência de termos projetos financiados aumenta ao termos mais projetos online no mês.
+
+### Comparando com os números do Catarse em todas as categorias
+```{r,echo=FALSE}
+# Preparing data sources
+# Download, extract and read into variables
+file <- "./data_all.csv"
+if(!file.exists(file)){
+  download.file("https://www.catarse.me/dbhero/dataclips/8720eec7-d8a7-4adc-a3ed-8fac162fde65.csv", destfile=file, method="curl")
+}
+projects <- read.csv(file, header=TRUE)
+xaxis <- as.POSIXct(paste(projects[,1], "-01", sep = ""))
+```
+
+Ao gerar um novo gráfico, considerando todas as categorias do Catarse. Podemos ver um comportamento distinto. 
 
 ```{r, echo=FALSE}
 ggplot(data = projects, aes(x = total_mes, y = total_resultado, colour = resultado)) + 
